@@ -1,4 +1,4 @@
-// AsmFinder.h - Declares the main app class and entry point.
+// Version.h - Defines the program version information.
 //
 // Copyright (C) 2024 Stephen Bonar
 //
@@ -11,24 +11,14 @@
 // Unless required by applicable law or agreed to in writing, software
 // distributed under the License is distributed on an "AS IS" BASIS,
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
+// See the License for the specific language governing permissionsand
 // limitations under the License.
 
-#ifndef ASM_FINDER_H
-#define ASM_FINDER_H
+#define PROGRAM_NAME "@CMAKE_PROJECT_NAME@"
+#define PROGRAM_COPYRIGHT "@PROJECT_COPYRIGHT@"
+#define PROGRAM_RELEASE "@PROJECT_RELEASE@"
+#define PROGRAM_BUILD_TYPE "@CMAKE_BUILD_TYPE@"
 
-#include <wx/wx.h>
-#include "MainWindow.h"
-
-/// @brief Represents the main application.
-/// @todo Define and enforce pre and post conditions.
-/// @todo Refine UI.
-/// @todo Implement instruction export.
-/// @todo Optimize Match algorithm for speed.
-class AsmFinder : public wxApp
-{
-public:
-    bool OnInit() override;
-};
-
-#endif
+#define VERSION_MAJOR @AsmFinder_VERSION_MAJOR@
+#define VERSION_MINOR @AsmFinder_VERSION_MINOR@
+#define VERSION_PATCH @AsmFinder_VERSION_PATCH@

@@ -17,16 +17,68 @@
 #ifndef MAIN_WINDOW_H
 #define MAIN_WINDOW_H
 
+#include <vector>
 #include <wx/wx.h>
+#include <wx/listctrl.h>
+#include <wx/textfile.h>
+#include "Instruction.h"
+#include "Version.h"
+
+enum ID
+{
+    Open = 1,
+    Save = 2,
+    Import = 3,
+    Export = 4,
+    Add = 3
+};
 
 class MainWindow : public wxFrame
 {
 public:
     MainWindow();
 private:
-    void OnExit(wxCommandEvent& event);
+    wxString version;
+    wxPanel* topPanel;
+    wxListView* instructionListView;
+    wxTextCtrl *nameTextCtrl;
+    wxTextCtrl *descriptionTextCtrl;
+    wxButton *addButton;
+    std::vector<Instruction> instructions;
+
+    void InitVersion();
+   
+    void InitMenuBar();
+
+    void InitStatusBar();
+
+    void InitTopPanel();
+
+    void InitInstructionListView();
+
+    void InitFrame();
+
+    void InitEventBindings();
 
     void OnAbout(wxCommandEvent& event);
+
+    void OnOpen(wxCommandEvent& event);
+
+    void OnImport(wxCommandEvent& event);
+
+    void OnExport(wxCommandEvent& event);
+
+    void OnAdd(wxCommandEvent& event);
+
+    void OnSave(wxCommandEvent& event);
+
+    void OnExit(wxCommandEvent& event);
+
+    void UpdateInstructionListView();
+
+    void MatchInstructions(const Line& line);
+
+    void ParseInstructionDefinition(wxString line);
 };
 
 #endif

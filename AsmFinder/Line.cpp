@@ -1,4 +1,4 @@
-// AsmFinder.h - Declares the main app class and entry point.
+// Line.cpp - Defines the Line class.
 //
 // Copyright (C) 2024 Stephen Bonar
 //
@@ -14,21 +14,4 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#ifndef ASM_FINDER_H
-#define ASM_FINDER_H
-
-#include <wx/wx.h>
-#include "MainWindow.h"
-
-/// @brief Represents the main application.
-/// @todo Define and enforce pre and post conditions.
-/// @todo Refine UI.
-/// @todo Implement instruction export.
-/// @todo Optimize Match algorithm for speed.
-class AsmFinder : public wxApp
-{
-public:
-    bool OnInit() override;
-};
-
-#endif
+#include "Line.h"

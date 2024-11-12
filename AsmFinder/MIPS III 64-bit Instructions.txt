@@ -1,0 +1,37 @@
+DADD, Doubleword Add
+DADDI, Doubleword Add Immediate
+DADDIU, Doubleword Add Immediate Unsigned
+DADDU, Doubleword Add Unsigned
+DDIV, Doubleword Divide
+DDIVU, Doubleword Divide Unsigned
+DMFC0, Doubleword Move From System Control Coprocessor
+DMTC0, Doubleword Move To System Control Coprocessor
+DMULT, Doubleword Multiply
+DMULTU, Doubleword Multiply Unsigned
+DSLL, Doubleword Shift Left Logical
+DSLLV, Doubleword Shift Left Logical Variable
+DSLL32, Doubleword Shift Left Logical + 32
+DSRA, Doubleword Shift Right Arithmetic
+DSRAV, Doubleword Shift Right Arithmetic Variable
+DSRA32, Doubleword Shift Right Arithmetic + 32
+DSRL, Doubleword Shift Right Logical
+DSRLV, Doubleword Shift Right Logical Variable
+DSRL32, Doubleword Shift Right Logical Variable + 32
+DSUB, Doubleword Subtract
+DSUBU, Doubleword Subtract Unsigned
+LD, Load Doubleword
+LDL, Load Doubleword Left
+LDR, Load Doubleword Right
+LLD, Load Linked Doubleword
+LWU, Load Word Unsigned
+SCD, Store Conditional Doubleword
+SD, Store Doubleword
+SDL, Store Doubleword Left
+SDR, Store Doubleword Right
+CEIL.L.fmt, Floating-point Fixed-point Format Ceiling To Long
+CVT.L.fmt, Floating-point Convert To Long Fixed-point Format
+DMFC1, Doubleword Move From FPU (Coprocessor 1)
+DMTC1, Doubleword Move To FPU (Coprocessor 1)
+FLOOR.L.fmt, Floating-point Floor To Long Fixed-point Format
+ROUND.L.fmt, Floating-point Round To Long Fixed-point Format
+TRUNC.L.fmt, Floating-point Truncate To Long Fixed-point Format
