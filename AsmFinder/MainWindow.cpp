@@ -69,7 +69,7 @@ void MainWindow::InitTopPanel()
 {
     topPanel = new wxPanel{ this, wxID_ANY, wxDefaultPosition };
 
-    wxStaticText *nameLabel = new wxStaticText{ topPanel, wxID_ANY, "Name" };
+    wxStaticText *nameLabel = new wxStaticText{ topPanel, wxID_ANY, "Instruction" };
     nameTextCtrl = new wxTextCtrl(topPanel, wxID_ANY);
     wxStaticText *descriptionLabel = new wxStaticText{ topPanel, wxID_ANY, 
                                                        "Description" };
@@ -120,27 +120,32 @@ void MainWindow::OnOpen(wxCommandEvent& event)
     if(dialog.ShowModal() != wxID_OK) 
         return;
 
+    ClearInstructionCounts();
+
     wxString path = dialog.GetPath();
     wxTextFile asmFile;
     asmFile.Open(path);
 
-    // Initial: 3:11:83 (1682.6 lines per second (321,379 lines/ 191 seconds))
-    // Elapsed time adding break: 3:11:83
-    // Elapsed time eliminating copy on Instruction::Match(): 3:00:72.
-    // TODO: Speed this up further.
-
-    int currentLineNum = 1;
+    std::vector<Line> lines;
+    int currentLineNum{ 1 };
     Line currentLine{ currentLineNum, asmFile.GetFirstLine() };
-    MatchInstructions(currentLine);
-   
+    lines.push_back(currentLine);
+
     while (!asmFile.Eof())
     {
         currentLineNum++;
         currentLine = Line{ currentLineNum, asmFile.GetNextLine() };
-        MatchInstructions(currentLine);
+        lines.push_back(currentLine);
     }
 
+    asmFile.Close();
+
+    for (auto& line : lines)
+        MatchInstructions(line);
+
     UpdateInstructionListView();
+
+    wxMessageBox("Complete", "AsmFinder", wxOK | wxICON_INFORMATION);  
 }
 
 void MainWindow::OnSave(wxCommandEvent& event)
@@ -245,8 +250,6 @@ void MainWindow::UpdateInstructionListView()
 
 void MainWindow::MatchInstructions(const Line& line)
 {
-    // This slows down exponentially based on the number of instructions to
-    // process. TODO: rework Instruction::Match(Line) to speed this up.
     for (auto& instruction : instructions)
     {
         if (instruction.Match(line))
@@ -269,4 +272,10 @@ void MainWindow::ParseInstructionDefinition(wxString line)
         Instruction i{ name, desc };
         instructions.push_back(i);
     }
+}
+
+void MainWindow::ClearInstructionCounts()
+{
+    for (auto& instruction : instructions)
+        instruction.ClearMatches();
 }

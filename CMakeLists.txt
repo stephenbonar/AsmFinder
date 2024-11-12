@@ -18,7 +18,7 @@
 cmake_minimum_required(VERSION 3.10.0)
 
 # Defines the project metadata.
-project(AsmFinder VERSION 0.7.0 LANGUAGES C CXX)
+project(AsmFinder VERSION 0.7.1 LANGUAGES C CXX)
 set(PROJECT_RELEASE "Alpha")
 set(PROJECT_COPYRIGHT "Copyright (C) 2024 Stephen Bonar")
 

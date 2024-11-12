@@ -39,6 +39,12 @@ else()
     add_executable(AsmFinder ${SOURCES})
 endif(WIN32)
 
+# Statically link the MSVC runtime.
+set_property(TARGET AsmFinder PROPERTY
+             MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
+target_sources(AsmFinder PRIVATE AsmFinder.rc)
+
 # Include all the directories that contain headers that we need that are not
 # in the current directory, otherwise the compiler won't find them.
 target_include_directories(AsmFinder PUBLIC ${INCLUDES})

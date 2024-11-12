@@ -33,9 +33,11 @@ enum ID
     Add = 3
 };
 
+/// @brief Represents the main window of the application.
 class MainWindow : public wxFrame
 {
 public:
+    /// @brief Default constructor; creates a new instance of MainWindow.
     MainWindow();
 private:
     wxString version;
@@ -46,39 +48,68 @@ private:
     wxButton *addButton;
     std::vector<Instruction> instructions;
 
+    /// @brief Initializes the version string for use in the title and about. 
     void InitVersion();
    
+    /// @brief Initialized the menu bar.
     void InitMenuBar();
 
+    /// @brief Initializes the status bar.
     void InitStatusBar();
 
+    /// @brief Initalizes the top panel.
     void InitTopPanel();
 
+    /// @brief Initializes the instruction list view.
     void InitInstructionListView();
 
+    /// @brief Initializes the window frame.
     void InitFrame();
 
+    /// @brief Initalizes the event bindings.
     void InitEventBindings();
 
+    /// @brief Event handler for the Help -> About menu item.
+    /// @param event The triggering event.
     void OnAbout(wxCommandEvent& event);
 
+    /// @brief Event handler for the File -> Open menu item.
+    /// @param event The triggering event.
     void OnOpen(wxCommandEvent& event);
 
+    /// @brief Event handler for the File -> Import menu item.
+    /// @param event The triggering event.
     void OnImport(wxCommandEvent& event);
 
+    /// @brief Event handler for the File -> Export menu item.
+    /// @param event The triggering event.
     void OnExport(wxCommandEvent& event);
 
+    /// @brief Event handler for the Add button.
+    /// @param event The triggering event.
     void OnAdd(wxCommandEvent& event);
 
+    /// @brief Event handler for the File -> Save menu item.
+    /// @param event The triggering event.
     void OnSave(wxCommandEvent& event);
 
+    /// @brief Event handler for the File -> Quit menu item.
+    /// @param event The triggering event.
     void OnExit(wxCommandEvent& event);
 
+    /// @brief Updates the instruction list view with the lastest info.
     void UpdateInstructionListView();
 
+    /// @brief Matches the line to any matching instructions.
+    /// @param line The line to attempt to match.
     void MatchInstructions(const Line& line);
 
+    /// @brief Parses instruction definitions read from a file.
+    /// @param line The line to parse.
     void ParseInstructionDefinition(wxString line);
+
+    /// @brief Clears any previously matches lines from each instruction.
+    void ClearInstructionCounts();
 };
 
 #endif

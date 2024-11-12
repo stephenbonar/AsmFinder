@@ -15,3 +15,18 @@
 // limitations under the License.
 
 #include "Line.h"
+
+Line::Line(int number, wxString text) : number{ number}, text{ text }
+{
+    wxStringTokenizer tokenizer(text);
+
+    // We now pre-tokenize the line when it is initalized so it is ready for
+    // comparison to the instruction immediate. This saves significant time
+    // compared to trying to tokenize at the time of comparsion. Note that we
+    // only need to obtain the first token for comparison to the instruction.
+    if (tokenizer.HasMoreTokens())
+    {
+        firstToken = tokenizer.NextToken();
+        firstToken.LowerCase();
+    }
+}

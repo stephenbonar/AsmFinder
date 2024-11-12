@@ -18,6 +18,7 @@
 #define LINE_H
 
 #include <wx/wx.h>
+#include <wx/tokenzr.h>
 
 /// @brief Represents a line from an assembly language source file.
 class Line
@@ -26,8 +27,7 @@ public:
     /// @brief Constructor; creates a new instance of Line.
     /// @param number The line number in the file.
     /// @param text The text of the line.
-    Line(int number, wxString text) : number{ number }, text{ text}
-    { }
+    Line(int number, wxString text);
     
     /// @brief Gets the line number in the file.
     /// @return An integer representing the line number in the file.
@@ -36,9 +36,14 @@ public:
     /// @brief Gets the text of the line.
     /// @return A wxString containing the text of the line.
     wxString Text() const { return text; }
+
+    /// @brief Gets the first token from the line.
+    /// @return A wxString representing the first token from the line.
+    wxString FirstToken() const { return firstToken; }
 private:
     int number;
     wxString text;
+    wxString firstToken;
 };
 
 #endif

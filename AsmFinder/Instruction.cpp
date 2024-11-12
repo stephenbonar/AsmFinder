@@ -18,43 +18,15 @@
 
 bool Instruction::Match(const Line& line)
 {
-    constexpr bool trimFromRight{ true };
-    constexpr bool trimFromLeft{ false };
-    constexpr bool caseInsensitive{ false };
-
-    // Convert both the line text and instruction name to lower case so
-    // they can be more easily compared.
-    wxString textLower = line.Text().Lower();
-    wxString nameLower = name.Lower();
-
-    // Obtain the position of the instruction name, if it exists, so we can
-    // determine if the instruction is isolated from other text.
-    int position = textLower.Find(nameLower);
-    
-    if (position != wxNOT_FOUND)
+    // Basically all we're doing here now is a compare. Initially, we tried to
+    // tokenize each line and instruction name in this method, but that
+    // resulted in horrendous times (3:11:83 for 321,379 lines). However, by
+    // pre-tokenzing each line as its read in from the file and pre-tokenizing
+    // the instruction name, the same number of lines takes 0:09:03.
+    if (token == line.FirstToken())
     {
-        // Obtain all the text leading up to the instruction name so we can
-        // see if it is isolated.
-        size_t from = 0;
-        size_t to = position + name.Length();
-        wxString subString = textLower.SubString(from, to);
-
-        // Remove the leading and trailing whitespace so we can look at the
-        // instruction name and see if it is in isolation.
-        wxString isolatedString = subString.Trim(trimFromRight);
-        isolatedString = isolatedString.Trim(trimFromLeft);
-
-        // If the instruction is indeed in isolation and not mistakenly part
-        // of some other text, we consider it a match.
-        if (isolatedString == nameLower)
-        {
-            matchingLines.push_back(line);
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        matchingLines.push_back(line);
+        return true;
     }
     
     return false;

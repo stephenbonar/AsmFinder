@@ -24,7 +24,6 @@
 /// @todo Define and enforce pre and post conditions.
 /// @todo Refine UI.
 /// @todo Implement instruction export.
-/// @todo Optimize Match algorithm for speed.
 class AsmFinder : public wxApp
 {
 public:

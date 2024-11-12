@@ -29,7 +29,7 @@ public:
     /// @param name The name of the instruction.
     /// @param description The instruction's description.
     Instruction(wxString name, wxString description) 
-        : name{ name }, description{ description }
+        : name{ name }, description{ description }, token{ name.Lower() }
     {}
 
     /// @brief Gets the name of the instruction. 
@@ -40,6 +40,10 @@ public:
     /// @return A wxString containing the instruction's description.
     wxString Description() const { return description; }
 
+    /// @brief Gets the instruction name as a lowercase token for comparsion.
+    /// @return A lowercase version of the instruction to use as a token.
+    wxString Token() const { return token; }
+
     /// @brief Obtains the lines that have the instruction in them.
     /// @return A vector of lines from the assembly language source file.
     std::vector<Line> MatchingLines() const { return matchingLines; }
@@ -49,9 +53,13 @@ public:
     /// @return True if the line contains the instruction, otherwise false.
     /// @post MatchingLines() will contain line if it matches.
     bool Match(const Line& line);
+
+    /// @brief Clears the matching lines associated with this instruction.
+    void ClearMatches() { matchingLines.clear(); }
 private:
     wxString name;
     wxString description;
+    wxString token;
     std::vector<Line> matchingLines;
 };
 
