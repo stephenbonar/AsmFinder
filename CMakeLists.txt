@@ -17,8 +17,12 @@
 # Set the minimum version of CMake needed to build the program.
 cmake_minimum_required(VERSION 3.10.0)
 
+# Specify the C++ standard.
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
+
 # Defines the project metadata.
-project(AsmFinder VERSION 0.7.1 LANGUAGES C CXX)
+project(AsmFinder VERSION 0.75.0 LANGUAGES C CXX)
 set(PROJECT_RELEASE "Alpha")
 set(PROJECT_COPYRIGHT "Copyright (C) 2024 Stephen Bonar")
 
