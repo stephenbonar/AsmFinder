@@ -41,8 +41,15 @@ public:
     MainWindow();
 private:
     wxString version;
+    wxStaticText* nameLabel;
+    wxStaticText* descriptionLabel;
+    wxStaticBoxSizer* topSizer;
+    wxStaticBoxSizer* bottomSizer;
+    wxBoxSizer* frameSizer;
+    wxBoxSizer* addInstructionSizer;
     wxPanel* topPanel;
     wxListView* instructionListView;
+    wxListView* resultListView;
     wxTextCtrl *nameTextCtrl;
     wxTextCtrl *descriptionTextCtrl;
     wxButton *addButton;
@@ -53,6 +60,12 @@ private:
    
     /// @brief Initialized the menu bar.
     void InitMenuBar();
+
+    void InitAddInstructionSizer();
+
+    void InitTopSizer();
+
+    void InitBottomSizer();
 
     /// @brief Initializes the status bar.
     void InitStatusBar();
