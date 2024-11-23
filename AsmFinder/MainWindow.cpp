@@ -22,50 +22,47 @@ MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "AsmFinder")
     InitMenuBar();
     InitStatusBar();
 
-    nameLabel = new wxStaticText{ this, wxID_ANY, "Instruction" };
-    descriptionLabel = new wxStaticText{ this, wxID_ANY, "Description" };
+    panel = new wxPanel(this);
 
-    nameTextCtrl = new wxTextCtrl(this, wxID_ANY);
-    descriptionTextCtrl = new wxTextCtrl(this, wxID_ANY);
-    addButton = new wxButton(this, ID::Add, "Add");
+    nameLabel = new wxStaticText{ panel, wxID_ANY, "Instruction" };
+    descriptionLabel = new wxStaticText{ panel, wxID_ANY, "Description" };
+
+    nameTextCtrl = new wxTextCtrl(panel, wxID_ANY);
+    descriptionTextCtrl = new wxTextCtrl(panel, wxID_ANY);
+    addButton = new wxButton(panel, ID::Add, "Add");
+
+    wxSizerFlags addInstructionSizerFlags = wxSizerFlags{ 0 };
+    addInstructionSizerFlags.Align(wxALIGN_CENTER_VERTICAL);
+    addInstructionSizerFlags.Border(wxALL, 5);
 
     addInstructionSizer = new wxBoxSizer{ wxHORIZONTAL };
-    addInstructionSizer->Add(nameLabel);
-    addInstructionSizer->Add(nameTextCtrl);
-    addInstructionSizer->Add(descriptionLabel);
-    addInstructionSizer->Add(descriptionTextCtrl);
-    addInstructionSizer->Add(addButton);
+    addInstructionSizer->Add(nameLabel, addInstructionSizerFlags);
+    addInstructionSizer->Add(nameTextCtrl, addInstructionSizerFlags);
+    addInstructionSizer->Add(descriptionLabel, addInstructionSizerFlags);
+    addInstructionSizer->Add(descriptionTextCtrl, addInstructionSizerFlags);
+    addInstructionSizer->Add(addButton, addInstructionSizerFlags);
 
-    instructionListView = new wxListView{ this, wxID_ANY, wxDefaultPosition };
+    instructionListView = new wxListView{ panel, wxID_ANY, wxDefaultPosition };
     instructionListView->AppendColumn("Instruction");
     instructionListView->AppendColumn("Description");
     instructionListView->AppendColumn("Found");
 
-    resultListView = new wxListView{ this, wxID_ANY };
+    resultListView = new wxListView{ panel, wxID_ANY };
     resultListView->AppendColumn("Line");
     resultListView->AppendColumn("Text");
 
-    topSizer = new wxStaticBoxSizer{ wxVERTICAL, this, "Search" };
+    topSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Search" };
     topSizer->Add(addInstructionSizer);
-    topSizer->Add(instructionListView);
+    topSizer->Add(instructionListView, 0, wxALL | wxEXPAND, 5);
 
-    bottomSizer = new wxStaticBoxSizer{ wxVERTICAL, this, "Results" };
-    bottomSizer->Add(resultListView);
+    bottomSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Results" };
+    bottomSizer->Add(resultListView, 0, wxALL | wxEXPAND, 5);
 
-    frameSizer = new wxBoxSizer{ wxVERTICAL };
-    frameSizer->Add(topSizer);
-    frameSizer->Add(bottomSizer);
-    SetSizerAndFit(frameSizer);
-    
-    /*
-    //InitTopPanel();
-    InitAddInstructionSizer();
-    InitInstructionListView();
-    InitTopSizer();
-    InitBottomSizer();
-    InitFrame();
-    */
-    InitEventBindings();
+    panelSizer = new wxBoxSizer{ wxVERTICAL };
+    panelSizer->Add(topSizer, 0, wxALL | wxEXPAND, 10);
+    panelSizer->Add(bottomSizer, 0, wxALL | wxEXPAND, 10);
+
+    panel->SetSizer(panelSizer);
 }
 
 void MainWindow::InitVersion()

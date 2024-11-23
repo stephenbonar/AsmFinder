@@ -41,11 +41,13 @@ public:
     MainWindow();
 private:
     wxString version;
+    wxPanel* panel;
     wxStaticText* nameLabel;
     wxStaticText* descriptionLabel;
     wxStaticBoxSizer* topSizer;
     wxStaticBoxSizer* bottomSizer;
-    wxBoxSizer* frameSizer;
+    //wxBoxSizer* frameSizer;
+    wxBoxSizer* panelSizer;
     wxBoxSizer* addInstructionSizer;
     wxPanel* topPanel;
     wxListView* instructionListView;
