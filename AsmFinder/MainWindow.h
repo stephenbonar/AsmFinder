@@ -30,7 +30,8 @@ enum ID
     Save = 2,
     Import = 3,
     Export = 4,
-    Add = 3
+    Add = 5,
+    Search = 6
 };
 
 /// @brief Represents the main window of the application.
@@ -41,21 +42,24 @@ public:
     MainWindow();
 private:
     wxString version;
+    wxString path;
     wxPanel* panel;
     wxStaticText* nameLabel;
     wxStaticText* descriptionLabel;
-    wxStaticBoxSizer* topSizer;
-    wxStaticBoxSizer* bottomSizer;
-    //wxBoxSizer* frameSizer;
-    wxBoxSizer* panelSizer;
-    wxBoxSizer* addInstructionSizer;
-    wxPanel* topPanel;
+    wxStaticText* fileLabel;
     wxListView* instructionListView;
     wxListView* resultListView;
     wxTextCtrl *nameTextCtrl;
     wxTextCtrl *descriptionTextCtrl;
     wxButton *addButton;
+    wxButton *searchButton;
+    wxBoxSizer* addInstructionSizer;
+    wxBoxSizer* searchInstructionSizer;
+    wxStaticBoxSizer* topSizer;
+    wxStaticBoxSizer* bottomSizer;
+    wxBoxSizer* panelSizer;
     std::vector<Instruction> instructions;
+    std::vector<Line> results;
 
     /// @brief Initializes the version string for use in the title and about. 
     void InitVersion();
@@ -63,26 +67,41 @@ private:
     /// @brief Initialized the menu bar.
     void InitMenuBar();
 
-    void InitAddInstructionSizer();
-
-    void InitTopSizer();
-
-    void InitBottomSizer();
-
     /// @brief Initializes the status bar.
     void InitStatusBar();
 
-    /// @brief Initalizes the top panel.
-    void InitTopPanel();
+    /// @brief Initializes the controls.
+    void InitControls();
 
-    /// @brief Initializes the instruction list view.
-    void InitInstructionListView();
-
-    /// @brief Initializes the window frame.
-    void InitFrame();
+    /// @brief Configures the layout using sizers.
+    void ConfigureLayout();
 
     /// @brief Initalizes the event bindings.
     void InitEventBindings();
+
+    /// @brief Updates the controls on the window.
+    void UpdateControls();
+
+    /// @brief Enables or disables the controls.
+    /// @param enabled Sets whether or not the controls are enabled. 
+    void EnableControls(bool enabled = true);
+
+    /// @brief Updates the instruction list view with the lastest info.
+    void UpdateInstructionListView();
+
+    /// @brief Updates the results list view with the latest info.
+    void UpdateResultListView();
+
+    /// @brief Matches the line to any matching instructions.
+    /// @param line The line to attempt to match.
+    void MatchInstructions(const Line& line);
+
+    /// @brief Parses instruction definitions read from a file.
+    /// @param line The line to parse.
+    void ParseInstructionDefinition(wxString line);
+
+    /// @brief Clears any previously matches lines from each instruction.
+    void ClearInstructionCounts();
 
     /// @brief Event handler for the Help -> About menu item.
     /// @param event The triggering event.
@@ -104,6 +123,10 @@ private:
     /// @param event The triggering event.
     void OnAdd(wxCommandEvent& event);
 
+    /// @brief Event handler for the Search button.
+    /// @param event The triggering event.
+    void OnSearch(wxCommandEvent& event);
+
     /// @brief Event handler for the File -> Save menu item.
     /// @param event The triggering event.
     void OnSave(wxCommandEvent& event);
@@ -111,20 +134,6 @@ private:
     /// @brief Event handler for the File -> Quit menu item.
     /// @param event The triggering event.
     void OnExit(wxCommandEvent& event);
-
-    /// @brief Updates the instruction list view with the lastest info.
-    void UpdateInstructionListView();
-
-    /// @brief Matches the line to any matching instructions.
-    /// @param line The line to attempt to match.
-    void MatchInstructions(const Line& line);
-
-    /// @brief Parses instruction definitions read from a file.
-    /// @param line The line to parse.
-    void ParseInstructionDefinition(wxString line);
-
-    /// @brief Clears any previously matches lines from each instruction.
-    void ClearInstructionCounts();
 };
 
 #endif

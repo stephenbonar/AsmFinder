@@ -18,51 +18,16 @@
 
 MainWindow::MainWindow() : wxFrame(nullptr, wxID_ANY, "AsmFinder")
 {
+    panel = new wxPanel(this);
+
     InitVersion();
     InitMenuBar();
     InitStatusBar();
-
-    panel = new wxPanel(this);
-
-    nameLabel = new wxStaticText{ panel, wxID_ANY, "Instruction" };
-    descriptionLabel = new wxStaticText{ panel, wxID_ANY, "Description" };
-
-    nameTextCtrl = new wxTextCtrl(panel, wxID_ANY);
-    descriptionTextCtrl = new wxTextCtrl(panel, wxID_ANY);
-    addButton = new wxButton(panel, ID::Add, "Add");
-
-    wxSizerFlags addInstructionSizerFlags = wxSizerFlags{ 0 };
-    addInstructionSizerFlags.Align(wxALIGN_CENTER_VERTICAL);
-    addInstructionSizerFlags.Border(wxALL, 5);
-
-    addInstructionSizer = new wxBoxSizer{ wxHORIZONTAL };
-    addInstructionSizer->Add(nameLabel, addInstructionSizerFlags);
-    addInstructionSizer->Add(nameTextCtrl, addInstructionSizerFlags);
-    addInstructionSizer->Add(descriptionLabel, addInstructionSizerFlags);
-    addInstructionSizer->Add(descriptionTextCtrl, addInstructionSizerFlags);
-    addInstructionSizer->Add(addButton, addInstructionSizerFlags);
-
-    instructionListView = new wxListView{ panel, wxID_ANY, wxDefaultPosition };
-    instructionListView->AppendColumn("Instruction");
-    instructionListView->AppendColumn("Description");
-    instructionListView->AppendColumn("Found");
-
-    resultListView = new wxListView{ panel, wxID_ANY };
-    resultListView->AppendColumn("Line");
-    resultListView->AppendColumn("Text");
-
-    topSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Search" };
-    topSizer->Add(addInstructionSizer);
-    topSizer->Add(instructionListView, 0, wxALL | wxEXPAND, 5);
-
-    bottomSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Results" };
-    bottomSizer->Add(resultListView, 0, wxALL | wxEXPAND, 5);
-
-    panelSizer = new wxBoxSizer{ wxVERTICAL };
-    panelSizer->Add(topSizer, 0, wxALL | wxEXPAND, 10);
-    panelSizer->Add(bottomSizer, 0, wxALL | wxEXPAND, 10);
-
-    panel->SetSizer(panelSizer);
+    InitControls();
+    ConfigureLayout();
+    Fit();
+    InitEventBindings();
+    UpdateControls();
 }
 
 void MainWindow::InitVersion()
@@ -103,76 +68,60 @@ void MainWindow::InitStatusBar()
     SetStatusText("Ready");
 }
 
-void MainWindow::InitAddInstructionSizer()
+void MainWindow::InitControls()
 {
-    wxStaticText *nameLabel = new wxStaticText{ this, wxID_ANY, "Instruction" };
-    nameTextCtrl = new wxTextCtrl(this, wxID_ANY);
-    wxStaticText *descriptionLabel = new wxStaticText{ this, wxID_ANY, 
-                                                       "Description" };
-    descriptionTextCtrl = new wxTextCtrl(this, wxID_ANY);
-    addButton = new wxButton(this, ID::Add, "Add");
+    nameLabel = new wxStaticText{ panel, wxID_ANY, "Instruction" };
+    descriptionLabel = new wxStaticText{ panel, wxID_ANY, "Description" };
+    fileLabel = new wxStaticText { panel, wxID_ANY, "Current File: <None>" };
 
-    addInstructionSizer = new wxBoxSizer(wxHORIZONTAL);
-    addInstructionSizer->Add(nameLabel);
-    addInstructionSizer->Add(nameTextCtrl);
-    addInstructionSizer->Add(descriptionLabel);
-    addInstructionSizer->Add(descriptionTextCtrl);
-    addInstructionSizer->Add(addButton);
-}
+    nameTextCtrl = new wxTextCtrl(panel, wxID_ANY);
+    descriptionTextCtrl = new wxTextCtrl(panel, wxID_ANY);
+    addButton = new wxButton(panel, ID::Add, "Add");
+    searchButton = new wxButton(panel, ID::Search, "Search");
 
-void MainWindow::InitTopSizer()
-{
-    wxStaticText* instructionText = new wxStaticText(this, wxID_ANY, "Instructions to Search");
-
-    wxStaticBoxSizer* topSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Search");
-    topSizer->Add(addInstructionSizer);
-    topSizer->Add(instructionText);
-    topSizer->Add(instructionListView);
-}
-
-void MainWindow::InitBottomSizer()
-{
-    wxStaticBoxSizer* bottomSizer = new wxStaticBoxSizer(wxVERTICAL, this, "Results");
-    bottomSizer->Add(new wxStaticText(this, wxID_ANY, "Matching Lines"));
-}
-
-void MainWindow::InitTopPanel()
-{
-    topPanel = new wxPanel{ this, wxID_ANY, wxDefaultPosition };
-
-    wxStaticText *nameLabel = new wxStaticText{ topPanel, wxID_ANY, "Instruction" };
-    nameTextCtrl = new wxTextCtrl(topPanel, wxID_ANY);
-    wxStaticText *descriptionLabel = new wxStaticText{ topPanel, wxID_ANY, 
-                                                       "Description" };
-    descriptionTextCtrl = new wxTextCtrl(topPanel, wxID_ANY);
-    addButton = new wxButton(topPanel, ID::Add, "Add");
-
-    wxBoxSizer* topSizer = new wxBoxSizer{ wxHORIZONTAL };
-    topSizer->Add(nameLabel);
-    topSizer->Add(nameTextCtrl);
-    topSizer->Add(descriptionLabel);
-    topSizer->Add(descriptionTextCtrl);
-    topSizer->Add(addButton);
-    topPanel->SetSizerAndFit(topSizer);
-}
-
-void MainWindow::InitInstructionListView()
-{
-    instructionListView = new wxListView{ this, wxID_ANY, 
-                                   wxDefaultPosition, wxSize{600, 400} };
+    instructionListView = new wxListView{ panel, wxID_ANY, wxDefaultPosition };
     instructionListView->AppendColumn("Instruction");
-    instructionListView->AppendColumn("Description");
+    instructionListView->AppendColumn("Description", wxLIST_FORMAT_LEFT, 300);
     instructionListView->AppendColumn("Found");
+
+    resultListView = new wxListView{ panel, wxID_ANY };
+    resultListView->AppendColumn("Line");
+    resultListView->AppendColumn("Text", wxLIST_FORMAT_LEFT, 400);
 }
 
-void MainWindow::InitFrame()
+void MainWindow::ConfigureLayout()
 {
-    wxBoxSizer* frameSizer = new wxBoxSizer{ wxVERTICAL };
-    frameSizer->Add(topSizer);
-    frameSizer->Add(bottomSizer);
-    //frameSizer->Add(topPanel, 0, wxEXPAND);
-    //frameSizer->Add(instructionListView, 1, wxEXPAND);
-    SetSizerAndFit(frameSizer);
+    wxSizerFlags addInstructionSizerFlags = wxSizerFlags{ 0 };
+    addInstructionSizerFlags.Align(wxALIGN_CENTER_VERTICAL);
+    addInstructionSizerFlags.Border(wxALL, 5);
+
+    addInstructionSizer = new wxBoxSizer{ wxHORIZONTAL };
+    addInstructionSizer->Add(nameLabel, addInstructionSizerFlags);
+    addInstructionSizer->Add(nameTextCtrl, addInstructionSizerFlags);
+    addInstructionSizer->Add(descriptionLabel, addInstructionSizerFlags);
+    addInstructionSizer->Add(descriptionTextCtrl, 1, 
+                             wxALIGN_CENTER_VERTICAL, 5);
+    addInstructionSizer->Add(addButton, addInstructionSizerFlags);
+
+    searchInstructionSizer = new wxBoxSizer{ wxHORIZONTAL };
+    searchInstructionSizer->Add(searchButton, 0, 
+                                wxALL | wxALIGN_CENTER_VERTICAL, 5);
+    searchInstructionSizer->Add(fileLabel, 0,
+                                wxALL | wxALIGN_CENTER_VERTICAL, 5);
+
+    topSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Search" };
+    topSizer->Add(addInstructionSizer, 0, wxEXPAND);
+    topSizer->Add(instructionListView, 1, wxALL | wxEXPAND, 5);
+    topSizer->Add(searchInstructionSizer);
+    
+    bottomSizer = new wxStaticBoxSizer{ wxVERTICAL, panel, "Results" };
+    bottomSizer->Add(resultListView, 1, wxALL | wxEXPAND, 5);
+
+    panelSizer = new wxBoxSizer{ wxVERTICAL };
+    panelSizer->Add(topSizer, 1, wxALL | wxEXPAND, 10);
+    panelSizer->Add(bottomSizer, 1, wxALL | wxEXPAND, 10);
+
+    panel->SetSizer(panelSizer);
 }
 
 void MainWindow::InitEventBindings()
@@ -184,6 +133,106 @@ void MainWindow::InitEventBindings()
     Bind(wxEVT_MENU, &MainWindow::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MainWindow::OnExit, this, wxID_EXIT);
     Bind(wxEVT_BUTTON, &MainWindow::OnAdd, this, ID::Add);
+    Bind(wxEVT_BUTTON, &MainWindow::OnSearch, this, ID::Search);
+}
+
+void MainWindow::UpdateControls()
+{
+    if (path == "")
+    {
+        EnableControls(false);
+    }
+    else
+    {
+        EnableControls();
+    }
+
+    UpdateInstructionListView();
+    UpdateResultListView();
+}
+
+void MainWindow::EnableControls(bool enabled)
+{
+    nameTextCtrl->Enable(enabled);
+    descriptionTextCtrl->Enable(enabled);
+    addButton->Enable(enabled);
+    searchButton->Enable(enabled);
+    instructionListView->Enable(enabled);
+    resultListView->Enable(enabled);
+}
+
+void MainWindow::UpdateInstructionListView()
+{
+    constexpr int descIndex{ 1 };
+    constexpr int foundIndex{ 2 };
+
+    int itemIndex{ 0 };
+
+    instructionListView->DeleteAllItems();
+
+    for (auto& i : instructions)
+    {
+        wxString name = i.Name();
+        wxString desc = i.Description();
+        wxString found;
+        found << i.MatchingLines().size();
+        instructionListView->InsertItem(itemIndex, i.Name());
+        instructionListView->SetItem(itemIndex, descIndex, desc);
+        instructionListView->SetItem(itemIndex, foundIndex, found);
+        itemIndex++;
+    }
+}
+
+void MainWindow::UpdateResultListView()
+{
+    constexpr int textIndex{ 1 };
+    int itemIndex{ 0 };
+
+    resultListView->DeleteAllItems();
+
+    for (auto& r : results)
+    {
+        wxString lineNumber;
+        lineNumber << r.Number();
+        resultListView->InsertItem(itemIndex, lineNumber);
+        resultListView->SetItem(itemIndex, textIndex, r.Text());
+        itemIndex++;
+    }
+}
+
+void MainWindow::MatchInstructions(const Line& line)
+{
+    for (auto& instruction : instructions)
+    {
+        if (instruction.Match(line))
+        {
+            results.push_back(line);
+            break;
+        }
+    }
+}
+
+void MainWindow::ParseInstructionDefinition(wxString line)
+{
+    int commaPosition = line.Find(',');
+
+    if (commaPosition != wxNOT_FOUND)
+    {
+        size_t nameFrom{ 0 };
+        size_t nameTo{ static_cast<size_t>(commaPosition) - 1 };
+        size_t descFrom{ static_cast<size_t>(commaPosition) + 1 };
+        size_t descTo{ line.Length() - 1 };
+        wxString name = line.SubString(nameFrom, nameTo);
+        wxString desc = line.SubString(descFrom, descTo);
+        Instruction i{ name, desc };
+        instructions.push_back(i);
+    }
+}
+
+void MainWindow::ClearInstructionCounts()
+{
+    for (auto& instruction : instructions)
+        instruction.ClearMatches();
 }
 
 void MainWindow::OnOpen(wxCommandEvent& event)
@@ -193,32 +242,9 @@ void MainWindow::OnOpen(wxCommandEvent& event)
     if(dialog.ShowModal() != wxID_OK) 
         return;
 
-    ClearInstructionCounts();
-
-    wxString path = dialog.GetPath();
-    wxTextFile asmFile;
-    asmFile.Open(path);
-
-    std::vector<Line> lines;
-    int currentLineNum{ 1 };
-    Line currentLine{ currentLineNum, asmFile.GetFirstLine() };
-    lines.push_back(currentLine);
-
-    while (!asmFile.Eof())
-    {
-        currentLineNum++;
-        currentLine = Line{ currentLineNum, asmFile.GetNextLine() };
-        lines.push_back(currentLine);
-    }
-
-    asmFile.Close();
-
-    for (auto& line : lines)
-        MatchInstructions(line);
-
-    UpdateInstructionListView();
-
-    wxMessageBox("Complete", "AsmFinder", wxOK | wxICON_INFORMATION);  
+    path = dialog.GetPath();
+    fileLabel->SetLabelText("Current File: " + path);
+    UpdateControls();  
 }
 
 void MainWindow::OnSave(wxCommandEvent& event)
@@ -269,7 +295,7 @@ void MainWindow::OnImport(wxCommandEvent& event)
         ParseInstructionDefinition(instructionFile.GetNextLine());
     }
 
-    UpdateInstructionListView();
+    UpdateControls();
 }
 
 void MainWindow::OnExport(wxCommandEvent& event)
@@ -282,7 +308,44 @@ void MainWindow::OnAdd(wxCommandEvent& event)
     Instruction i{ nameTextCtrl->GetLineText(0), 
                    descriptionTextCtrl->GetLineText(0) };
     instructions.push_back(i);
-    UpdateInstructionListView();
+    UpdateControls();
+}
+
+void MainWindow::OnSearch(wxCommandEvent& event)
+{
+    if (instructions.size() == 0)
+    {
+        wxMessageBox("You must add at least one instruction to search for.",
+                     "AsmFinder", wxOK | wxICON_INFORMATION);
+        return;
+    }
+        
+    EnableControls(false);
+    ClearInstructionCounts();
+
+    wxTextFile asmFile;
+    asmFile.Open(path);
+
+    std::vector<Line> lines;
+    int currentLineNum{ 1 };
+    Line currentLine{ currentLineNum, asmFile.GetFirstLine() };
+    lines.push_back(currentLine);
+
+    while (!asmFile.Eof())
+    {
+        currentLineNum++;
+        currentLine = Line{ currentLineNum, asmFile.GetNextLine() };
+        lines.push_back(currentLine);
+    }
+
+    asmFile.Close();
+
+    for (auto& line : lines)
+        MatchInstructions(line);
+
+    UpdateControls();
+
+    wxMessageBox("Complete", "AsmFinder", wxOK | wxICON_INFORMATION);
 }
 
 void MainWindow::OnAbout(wxCommandEvent& event)
@@ -297,58 +360,4 @@ void MainWindow::OnAbout(wxCommandEvent& event)
 void MainWindow::OnExit(wxCommandEvent& event)
 {
     Close(true);
-}
-
-void MainWindow::UpdateInstructionListView()
-{
-    constexpr int descIndex{ 1 };
-    constexpr int foundIndex{ 2 };
-
-    int itemIndex{ 0 };
-
-    instructionListView->DeleteAllItems();
-
-    for (auto& i : instructions)
-    {
-        wxString name = i.Name();
-        wxString desc = i.Description();
-        wxString found;
-        found << i.MatchingLines().size();
-        instructionListView->InsertItem(itemIndex, i.Name());
-        instructionListView->SetItem(itemIndex, descIndex, desc);
-        instructionListView->SetItem(itemIndex, foundIndex, found);
-        itemIndex++;
-    }
-}
-
-void MainWindow::MatchInstructions(const Line& line)
-{
-    for (auto& instruction : instructions)
-    {
-        if (instruction.Match(line))
-            break;
-    }
-}
-
-void MainWindow::ParseInstructionDefinition(wxString line)
-{
-    int commaPosition = line.Find(',');
-
-    if (commaPosition != wxNOT_FOUND)
-    {
-        size_t nameFrom{ 0 };
-        size_t nameTo{ static_cast<size_t>(commaPosition) - 1 };
-        size_t descFrom{ static_cast<size_t>(commaPosition) + 1 };
-        size_t descTo{ line.Length() - 1 };
-        wxString name = line.SubString(nameFrom, nameTo);
-        wxString desc = line.SubString(descFrom, descTo);
-        Instruction i{ name, desc };
-        instructions.push_back(i);
-    }
-}
-
-void MainWindow::ClearInstructionCounts()
-{
-    for (auto& instruction : instructions)
-        instruction.ClearMatches();
 }
